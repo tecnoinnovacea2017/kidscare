@@ -5,7 +5,6 @@ var sections = {}, _height = $(window).height(), i = 0;
 
 $(document).ready(function () {
     $('#contact-form label').labelOver('over');
-
     //Intro area slider starting.
     $('#introBg').maximage();
 
@@ -104,6 +103,110 @@ $(document).scroll(function () {
     }
 });
 
+
+$(document).ready(function () {
+    $('#contact-for label').labelOver('over');
+    //Intro area slider starting.
+    $('#introBg').maximage();
+
+    setTimeout(function () {
+        //Set width attribute for logo
+        $('.logo').attr('width', $('.logo').width());
+
+        resizeOperation();
+    }, 500);
+
+    getWorks();
+
+    /*for select main menu operation*/
+    $('select.mainMenu').change(function () {
+        var selectedMenu = $(this).attr('value');
+        var scrollToTop = $('#' + selectedMenu).offset().top - $('.mainMenuWrap').height();
+        if (selectedMenu == "homePage")
+            $('body').scrollTo(0, 800, { queue: true });
+        else
+            $('body').scrollTo(scrollToTop, 800, { queue: true });
+    });
+
+    /*for main menu scroll*/
+    setTimeout(function(){$('#siteMenu').localScroll(800);},1000);
+
+    /*parallax operation for home page image*/
+    $('.prlxImage.bg1').parallax("50%", 0.55);
+    $('.prlxImage.bg2').parallax("100%", 0.20);
+
+    /*post operation for contact page*/
+    $("#contact-for a").click(function () {
+
+        /*function which validates input with required class in contact page */
+        var myform = $("#contact-for").validate({
+            email: true,
+            errorPlacement: function (error, element) {
+                error.appendTo();
+            }
+        }).form();
+
+        /*myform returns true if form is valid.*/
+        if (myform) {
+            var action = $("#contact-for").attr('action');
+            $.post(action, {
+                name: $('#name').val(),
+                email: $('#email').val(),
+                message: $('#message').val()
+            },
+                    function (data) {
+                        d = data;
+                        $('.response').remove();
+
+                        $('#contact-for a').fadeOut('slow', function () {
+                            if (data == 'Message sent!') {
+                                $('#contact-for a').html('YOUR MESSAGE SENDED. THANKS').addClass('success');
+                            }
+                            else {
+                                $('#contact-for a').html('SORRY, FAILED TO SEND YOUR MESSAGE.').addClass('error');
+                            }
+                        });
+                        setTimeout(function () {
+                            $('#contact-for a').addClass('dis').fadeIn('slow');
+                        }, 800);
+                    });
+        }
+        return false;
+    });
+});
+
+$(document).scroll(function () {
+    wTop = $(document).scrollTop();
+
+    var s1Top = 0;
+    var s2Top = $('#aboutUs').offset().top - (($('#works').offset().top - $('#aboutUs').offset().top) / 2);
+    var s3Top = $('#works').offset().top - (($('#contact').offset().top - $('#works').offset().top) / 2);
+    var s4Top = $('#contact').offset().top - (($(document).height() - $('#contact').offset().top) / 2);
+
+    $('#siteMenu a').removeClass('active');
+    $('select.mainMenu option:selected').removeAttr('selected');
+
+    if (wTop == s1Top) {
+        $('#siteMenu a').eq(0).addClass('active');
+        $('select.mainMenu option:nth(0)').attr("selected", "selected");
+    }
+    else if (wTop >= s2Top && wTop < s3Top) {
+        $('#siteMenu a').eq(1).addClass('active');
+        $('select.mainMenu option:nth(1)').attr("selected", "selected");
+    }
+    else if (wTop >= s3Top && wTop < s4Top) {
+        $('#siteMenu a').eq(2).addClass('active');
+        $('select.mainMenu option:nth(2)').attr("selected", "selected");
+    }
+    else if (wTop >= s4Top) {
+        $('#siteMenu a').eq(3).addClass('active');
+        $('select.mainMenu option:nth(3)').attr("selected", "selected");
+    }
+});
+
+
+
+
 $(window).resize(function () {
     resizeOperation();
 });
@@ -170,6 +273,7 @@ function getWorks() {
                 content += "<div class='" + cssName + " workItem'>";
                 content += "<img src='" + img + "' alt='WorkItem' />";
                 content += "<div class='mask'><a class='butn white' href='" + id + "'>MORE DETAIL</a></div>";
+                content += "<div class='mask'><a class='butn whit' href='" + id + "'>MORE DETAIL</a></div>";
                 content += "</div>";
 
                 counter = counter + 1;
